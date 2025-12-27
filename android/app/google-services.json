@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "72178836284",
+    "project_id": "wassena-59085",
+    "storage_bucket": "wassena-59085.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:72178836284:android:5bc851572b56a77aebb439",
+        "android_client_info": {
+          "package_name": "com.example.wassena"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoRvYh_KZyhnsVAtqGfi43oIytQ718jXk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
