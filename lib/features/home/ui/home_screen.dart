@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:wassena/features/home/data/datasource/restaurant_remote_source.dart';
+import 'package:wassena/features/home/ui/restaurant_details.dart';
 import 'package:wassena/features/menu/ui/menu_screen.dart';
 import 'package:wassena/utils/my_colors.dart';
 
@@ -22,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         toolbarHeight: 50.h,
         backgroundColor: MyColors.kMainColor,
         title: Text(
@@ -89,43 +91,46 @@ class _HomeScreenState extends State<HomeScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) {
-                                  return MenuScreen(
-                                    restaurantId: asyncSnapshot.data![index].id,
+                                  return RestaurantDetailsScreen(
+                                    restaurant: asyncSnapshot.data![index],
                                   );
                                 },
                               ),
                             );
                           },
-                          child: Stack(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    fit: BoxFit.fill,
-                                    image: NetworkImage(
-                                      asyncSnapshot.data![index].imageUrl,
+                          child: Hero(
+                            tag: asyncSnapshot.data![index].id,
+                            child: Stack(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      fit: BoxFit.fill,
+                                      image: NetworkImage(
+                                        asyncSnapshot.data![index].imageUrl,
+                                      ),
                                     ),
-                                  ),
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                              ),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.5),
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    asyncSnapshot.data![index].name,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    borderRadius: BorderRadius.circular(16),
                                   ),
                                 ),
-                              ),
-                            ],
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.5),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      asyncSnapshot.data![index].name,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },

@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,56 +21,10 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'Flutter Demo',
-          theme: ThemeData(
-            colorScheme: .fromSeed(seedColor: Colors.deepPurple),
-          ),
-          home: child,
+
+          home: HomeScreen(),
         );
       },
-      child: HomeScreen(),
-    );
-  }
-}
-
-class App extends StatefulWidget {
-  const App({super.key});
-
-  @override
-  State<App> createState() => _AppState();
-}
-
-class _AppState extends State<App> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  User? _user;
-
-  Future<void> signInAnonymously() async {
-    try {
-      UserCredential userCredential = await _auth.signInAnonymously();
-      setState(() {
-        _user = userCredential.user;
-      });
-      print('Signed in anonymously as: ${_user!.uid}');
-    } catch (e) {
-      print('Failed to sign in anonymously: $e');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.blue),
-      body: Center(
-        child: IconButton(
-          onPressed: () async {
-            await _auth.createUserWithEmailAndPassword(
-              email: 'abdalmooulatare@gmail.com',
-              password: '123456',
-            );
-          },
-          icon: Icon(Icons.add_ic_call),
-        ),
-      ),
     );
   }
 }

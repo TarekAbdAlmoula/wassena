@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:wassena/features/menu/data/model/restaurants_menu.dart';
-import 'package:wassena/utils/my_colors.dart';
 
 class ItemCard extends StatelessWidget {
   final GestureTapCallback? press;
