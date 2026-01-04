@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:wassena/features/menu/data/model/restaurants_menu.dart';
 
-abstract class MenuRemoteSource {
+abstract class ResataurantMenuController {
   static Future<List<RestaurantsMenu>> getRestaurantMenu(
     String restaurantId,
   ) async {

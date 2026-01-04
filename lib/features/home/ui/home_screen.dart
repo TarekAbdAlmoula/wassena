@@ -1,9 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:wassena/features/home/data/datasource/restaurant_remote_source.dart';
+import 'package:wassena/features/cart/ui/cart_screen.dart';
+import 'package:wassena/features/home/data/datasource/restaurant_controller.dart';
 import 'package:wassena/features/home/ui/restaurant_details.dart';
-import 'package:wassena/features/menu/ui/menu_screen.dart';
 import 'package:wassena/utils/my_colors.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -23,6 +23,24 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 12.w),
+            child: IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return CartScreen();
+                    },
+                  ),
+                );
+              },
+              icon: Icon(Icons.shopping_cart, color: Colors.white),
+            ),
+          ),
+        ],
         automaticallyImplyLeading: false,
         toolbarHeight: 50.h,
         backgroundColor: MyColors.kMainColor,
@@ -33,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
       ),
       body: FutureBuilder(
-        future: RestaurantRemoteSource.getRestaurants(),
+        future: RestaurantController.getRestaurants(),
 
         builder: (context, asyncSnapshot) {
           if (asyncSnapshot.connectionState == ConnectionState.waiting) {

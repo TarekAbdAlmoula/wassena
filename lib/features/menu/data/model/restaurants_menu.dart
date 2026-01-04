@@ -1,31 +1,32 @@
 class RestaurantsMenu {
   final String restaurantId;
-  final List<Menu> menu;
+  final List<Meal> meal;
 
-  RestaurantsMenu({required this.menu, required this.restaurantId});
+  RestaurantsMenu({required this.meal, required this.restaurantId});
   factory RestaurantsMenu.fromJson(Map<String, dynamic> json) {
     return RestaurantsMenu(
       restaurantId: json["restaurant_id"],
-      menu: (json['menu'] as List).map((menu) => Menu.fromJson(menu)).toList(),
+      meal: (json['menu'] as List).map((menu) => Meal.fromJson(menu)).toList(),
     );
   }
 }
 
-class Menu {
+class Meal {
   final String itemName;
   final String description;
   final num price;
   final String imageUrl;
   final bool availabilityStatus;
-  Menu({
+
+  Meal({
     required this.itemName,
     required this.description,
     required this.imageUrl,
     required this.availabilityStatus,
     required this.price,
   });
-  factory Menu.fromJson(Map<String, dynamic> json) {
-    return Menu(
+  factory Meal.fromJson(Map<String, dynamic> json) {
+    return Meal(
       itemName: json['item_name'],
       description: json['description'],
       imageUrl: json['image_url'],

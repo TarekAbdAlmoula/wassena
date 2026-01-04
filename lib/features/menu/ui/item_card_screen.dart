@@ -1,10 +1,86 @@
+// import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:wassena/features/menu/data/datasource/resataurant_menu_controller.dart';
 import 'package:wassena/features/menu/data/model/restaurants_menu.dart';
+import 'package:wassena/features/menu/ui/Item_details_screen.dart';
+import 'package:wassena/utils/my_colors.dart';
+
+class ItemCardScreen extends StatefulWidget {
+  final String restaurantId;
+  const ItemCardScreen({super.key, required this.restaurantId});
+
+  @override
+  State<ItemCardScreen> createState() => _ItemCardScreenState();
+}
+
+class _ItemCardScreenState extends State<ItemCardScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: MyColors.kMainColor,
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
+      body: FutureBuilder(
+        future: ResataurantMenuController.getRestaurantMenu(
+          widget.restaurantId,
+        ),
+        builder: (context, asyncSnapshot) {
+          if (asyncSnapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (asyncSnapshot.hasError) {
+            return Center(child: Text('حدث خطأ ما'));
+          }
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Column(
+              children: [
+                ListView.builder(
+                  itemCount: asyncSnapshot.data![0].meal.length,
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      children: [
+                        ItemCard(
+                          press: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return ItemDetailsScreen(
+                                    restaurantId: widget.restaurantId,
+                                    meal: asyncSnapshot.data![0].meal[index],
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          menu: asyncSnapshot.data![0].meal[index],
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
 
 class ItemCard extends StatelessWidget {
   final GestureTapCallback? press;
-  final Menu menu;
+  final Meal menu;
   const ItemCard({super.key, required this.press, required this.menu});
 
   @override

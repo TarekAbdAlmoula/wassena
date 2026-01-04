@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:wassena/features/home/data/model/restaurant.dart';
-import 'package:wassena/features/menu/ui/menu_screen.dart';
+import 'package:wassena/features/menu/ui/Item_details_screen.dart';
+import 'package:wassena/features/menu/ui/item_card_screen.dart';
+import 'package:wassena/utils/custom_widget/custom_detail_card.dart';
 import 'package:wassena/utils/my_colors.dart';
 
 class RestaurantDetailsScreen extends StatelessWidget {
@@ -20,7 +22,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return MenuScreen(restaurantId: restaurant.id);
+                      return ItemCardScreen(restaurantId: restaurant.id);
                     },
                   ),
                 );
@@ -64,39 +66,6 @@ class RestaurantDetailsScreen extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class CustomDetailCard extends StatelessWidget {
-  final String title;
-  final String description;
-  const CustomDetailCard({
-    super.key,
-    required this.title,
-    required this.description,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(5),
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 191, 190, 190),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Text(title, style: TextStyle(fontSize: 18, color: Colors.white)),
-          Divider(color: Colors.white),
-          Text(
-            description,
-            style: TextStyle(color: Colors.white, fontSize: 16),
-          ),
-        ],
       ),
     );
   }

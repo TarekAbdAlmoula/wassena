@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:wassena/features/home/data/model/restaurant.dart';
 
-abstract class RestaurantRemoteSource {
+abstract class RestaurantController {
   static Future<List<Restaurant>> getRestaurants() async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('restaurants')
