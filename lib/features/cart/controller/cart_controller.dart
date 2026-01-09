@@ -79,4 +79,8 @@ class CartController extends ChangeNotifier {
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
+
+  String getOrderId() {
+    return orderId;
+  }
 }

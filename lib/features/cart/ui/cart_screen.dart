@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:wassena/features/cart/controller/cart_controller.dart';
+import 'package:wassena/features/delivery/ui/delivery_screen.dart';
 import 'package:wassena/utils/my_colors.dart';
 
 class CartScreen extends StatelessWidget {
@@ -105,9 +106,26 @@ class CartScreen extends StatelessWidget {
                               PaymentCard(
                                 paymentMethod: 'الدفع كاش',
                                 onTap: () {
-                                  context.read<CartController>().makePayment(
-                                    paymentMethod: 'الدفع كاش',
-                                  );
+                                  try {
+                                    context.read<CartController>().makePayment(
+                                      paymentMethod: 'الدفع كاش',
+                                    );
+                                    Navigator.pop(context);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return DeliveryScreen(
+                                            orderId: context
+                                                .read<CartController>()
+                                                .getOrderId(),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  } on Exception catch (e) {
+                                    // TODO
+                                  }
                                 },
                               ),
                               PaymentCard(
