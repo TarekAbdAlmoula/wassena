@@ -119,6 +119,9 @@ class CartScreen extends StatelessWidget {
                                             orderId: context
                                                 .read<CartController>()
                                                 .getOrderId(),
+                                            restaurantId: context
+                                                .read<CartController>()
+                                                .getRestaurantId(),
                                           );
                                         },
                                       ),

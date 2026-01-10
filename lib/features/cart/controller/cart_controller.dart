@@ -72,7 +72,7 @@ class CartController extends ChangeNotifier {
     final uuid = Uuid();
     String id = uuid.v4();
     await _firebaseFirestore.collection('payments').add({
-      'order_id ': orderId,
+      'order_id': orderId,
       'payment_method': paymentMethod,
       'transaction_id': paymentMethod == 'الدفع كاش' ? '' : id,
       'totalAmount': orders!.totalAmount,
@@ -82,5 +82,9 @@ class CartController extends ChangeNotifier {
 
   String getOrderId() {
     return orderId;
+  }
+
+  String getRestaurantId() {
+    return orders!.restaurantId;
   }
 }
