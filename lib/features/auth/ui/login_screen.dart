@@ -50,8 +50,16 @@ class _LoginScreenBodyState extends State<LoginScreenBody> {
                 controller: emailController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'الايميل مطلوب';
+                    return "الرجاء إدخال البريد الإلكتروني";
                   }
+
+                  final emailRegex = RegExp(
+                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                  );
+                  if (!emailRegex.hasMatch(value)) {
+                    return "الرجاء إدخال بريد إلكتروني صالح";
+                  }
+
                   return null;
                 },
               ),
@@ -86,6 +94,16 @@ class _LoginScreenBodyState extends State<LoginScreenBody> {
                   } catch (e) {
                     print('Failed to create a new user%:$e');
                   }
+                },
+              ),
+              SizedBox(height: 10.h),
+              CustomButton(
+                text: 'انشاء حساب جديد',
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegisterScreen()),
+                  );
                 },
               ),
               // CustomButton(text: , onPressed: onPressed)

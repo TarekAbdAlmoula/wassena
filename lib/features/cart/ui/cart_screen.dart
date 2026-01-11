@@ -27,7 +27,7 @@ class CartScreen extends StatelessWidget {
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: const Color.fromARGB(255, 237, 201, 200),
+          color: const Color.fromRGBO(228, 227, 227, 1),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -49,25 +49,24 @@ class CartScreen extends StatelessWidget {
                               cart.items[index].itemName,
                               textAlign: TextAlign.end,
                               style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
+                                color: Colors.black,
+                                fontSize: 18.sp,
                               ),
                             ),
                             Text(
                               'السعر: ${cart.items[index].price}  الكمية: ${cart.items[index].qty}',
                               style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
+                                color: Colors.black,
+                                fontSize: 18.sp,
                               ),
                             ),
-                            Text('المطعم'),
                           ],
                         ),
                         SizedBox(width: 5),
                         Container(
                           padding: EdgeInsets.all(10),
-                          height: 75,
-                          width: 100,
+                          height: 75.h,
+                          width: 100.w,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             image: DecorationImage(
@@ -94,15 +93,18 @@ class CartScreen extends StatelessWidget {
                     context: context,
                     builder: (context) {
                       return SizedBox(
-                        height: 250,
+                        height: 250.h,
                         width: double.infinity,
                         child: SingleChildScrollView(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               SizedBox(height: 20),
-                              Text('اختر طريقة الدفع'),
-                              SizedBox(height: 10),
+                              Text(
+                                'اختر طريقة الدفع',
+                                style: TextStyle(fontSize: 18.sp),
+                              ),
+                              SizedBox(height: 10.h),
                               PaymentCard(
                                 paymentMethod: 'الدفع كاش',
                                 onTap: () {
@@ -133,17 +135,57 @@ class CartScreen extends StatelessWidget {
                               ),
                               PaymentCard(
                                 onTap: () {
-                                  context.read<CartController>().makePayment(
-                                    paymentMethod: 'الدفع عن طريق البطاقة',
-                                  );
+                                  try {
+                                    context.read<CartController>().makePayment(
+                                      paymentMethod: 'الدفع عن طريق البطاقة',
+                                    );
+                                    Navigator.pop(context);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return DeliveryScreen(
+                                            orderId: context
+                                                .read<CartController>()
+                                                .getOrderId(),
+                                            restaurantId: context
+                                                .read<CartController>()
+                                                .getRestaurantId(),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  } on Exception catch (e) {
+                                    // TODO
+                                  }
                                 },
                                 paymentMethod: 'الدفع عن طريق البطاقة',
                               ),
                               PaymentCard(
                                 onTap: () {
-                                  context.read<CartController>().makePayment(
-                                    paymentMethod: 'الدفع عن طريق paypal',
-                                  );
+                                  try {
+                                    context.read<CartController>().makePayment(
+                                      paymentMethod: 'الدفع عن طريق paypal',
+                                    );
+                                    Navigator.pop(context);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return DeliveryScreen(
+                                            orderId: context
+                                                .read<CartController>()
+                                                .getOrderId(),
+                                            restaurantId: context
+                                                .read<CartController>()
+                                                .getRestaurantId(),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  } on Exception catch (e) {
+                                    // TODO
+                                  }
                                 },
                                 paymentMethod: 'الدفع عن طريق paypal',
                               ),
@@ -158,15 +200,20 @@ class CartScreen extends StatelessWidget {
                 }
               },
               child: Container(
-                height: 25,
+                height: 40,
 
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(5),
                 ),
                 margin: EdgeInsets.symmetric(vertical: 10),
-                width: 90.w,
-                child: Center(child: Text('إكمال الطلب ')),
+                width: 120.w,
+                child: Center(
+                  child: Text(
+                    'إكمال الطلب ',
+                    style: TextStyle(fontSize: 16.sp),
+                  ),
+                ),
               ),
             ),
           ],
@@ -197,10 +244,12 @@ class PaymentCard extends StatelessWidget {
           padding: EdgeInsets.all(5),
           margin: EdgeInsets.all(5),
           decoration: BoxDecoration(
-            color: Colors.amber,
+            color: const Color.fromRGBO(228, 227, 227, 1),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Text(paymentMethod),
+          child: Center(
+            child: Text(paymentMethod, style: TextStyle(fontSize: 16.sp)),
+          ),
         ),
       ),
     );

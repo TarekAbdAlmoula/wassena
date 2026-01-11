@@ -85,21 +85,32 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                       ],
                     ),
-                    Text(
-                      'المطاعم',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 15,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            textAlign: TextAlign.right,
+                            'المطاعم',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     GridView.builder(
                       itemCount: asyncSnapshot.data!.length,
                       physics: const NeverScrollableScrollPhysics(),
-                      padding: EdgeInsetsDirectional.symmetric(),
                       shrinkWrap: true,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisSpacing: 20,
+                        crossAxisSpacing: 10,
                         crossAxisCount: 2,
                       ),
                       itemBuilder: (context, index) {

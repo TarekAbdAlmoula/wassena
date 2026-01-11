@@ -73,8 +73,17 @@ class _RegisterScreeBodyState extends State<RegisterScreeBody> {
                 controller: emailController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'الايميل مطلوب';
+                    return "الرجاء إدخال البريد الإلكتروني";
                   }
+
+                  // تحقق بسيط باستخدام regex
+                  final emailRegex = RegExp(
+                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                  );
+                  if (!emailRegex.hasMatch(value)) {
+                    return "الرجاء إدخال بريد إلكتروني صالح";
+                  }
+
                   return null;
                 },
               ),
@@ -149,8 +158,9 @@ class CustomButton extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        height: 35.h,
-        width: 130.w,
+        padding: EdgeInsets.symmetric(vertical: 7.h),
+        height: 45.h,
+        // width: 130.w,
         decoration: BoxDecoration(
           color: Color(0xffDC5C35),
           borderRadius: BorderRadius.circular(10),

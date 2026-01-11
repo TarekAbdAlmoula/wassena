@@ -42,10 +42,22 @@ class RestaurantDetailsScreen extends StatelessWidget {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              Container(
+              SizedBox(
                 height: 300.h,
                 width: double.infinity,
                 child: Image.network(restaurant.imageUrl),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(width: 10),
+
+                  Text(
+                    '${restaurant.rating}',
+                    style: TextStyle(fontSize: 20.sp),
+                  ),
+                  Icon(Icons.star, size: 27.sp, color: Colors.yellow),
+                ],
               ),
               CustomDetailCard(
                 title: ' : اسم المطعم',
@@ -63,6 +75,8 @@ class RestaurantDetailsScreen extends StatelessWidget {
                 title: ': العنوان',
                 description: restaurant.location,
               ),
+
+              //creata rating card
             ],
           ),
         ),

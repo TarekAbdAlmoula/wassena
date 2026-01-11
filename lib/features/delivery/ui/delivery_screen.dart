@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:wassena/features/delivery/data/controller/delivery_controller.dart';
 import 'package:wassena/features/delivery/data/model/driver.dart';
+import 'package:wassena/features/home/ui/home_screen.dart';
 import 'package:wassena/utils/my_colors.dart';
 
 class DeliveryScreen extends StatefulWidget {
@@ -123,9 +124,15 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                     );
                   },
                 ),
-                TextField(
-                  controller: controller,
-                  decoration: InputDecoration(border: OutlineInputBorder()),
+                Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: TextField(
+                    controller: controller,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'اكتب تعليقك',
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
@@ -140,6 +147,10 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                     });
 
                     Navigator.pop(context);
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                    );
                   },
                   child: const Text('إرسال التقييم'),
                 ),
@@ -171,6 +182,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: MyColors.kMainColor,
+        iconTheme: IconThemeData(color: Colors.white),
         title: const Text('توصيل الطلب', style: TextStyle(color: Colors.white)),
       ),
       body: Column(
@@ -181,13 +193,16 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
             margin: const EdgeInsets.all(10),
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.yellow,
+              color: const Color.fromRGBO(228, 227, 227, 1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                const Text('بيانات السائق', style: TextStyle(fontSize: 20)),
+                const Text(
+                  'بيانات السائق',
+                  style: TextStyle(fontSize: 20, color: Color(0xff094067)),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [Text(_driver!.driverName), const Text(': الاسم ')],

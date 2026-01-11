@@ -15,18 +15,18 @@ class CustomDetailCard extends StatelessWidget {
       margin: EdgeInsets.all(5),
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 191, 190, 190),
+        color: const Color.fromRGBO(228, 227, 227, 1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(title, style: TextStyle(fontSize: 18, color: Colors.white)),
+          Text(title, style: TextStyle(fontSize: 18, color: Color(0xff094067))),
           Divider(color: Colors.white),
           Text(
             description,
             textAlign: TextAlign.right,
-            style: TextStyle(color: Colors.white, fontSize: 16),
+            style: TextStyle(color: Colors.black, fontSize: 16),
           ),
         ],
       ),
