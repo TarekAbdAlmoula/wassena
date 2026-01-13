@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:wassena/features/delivery/data/model/driver.dart';
 
 abstract class DeliveryController {
@@ -28,5 +29,15 @@ abstract class DeliveryController {
       'estimated_time': 10,
       'actual_time': 12,
     });
+  }
+
+  static Future<LatLng> getRestaurantLocation(String restaurantId) async {
+    final doc = await FirebaseFirestore.instance
+        .collection('restaurants')
+        .doc(restaurantId)
+        .get();
+
+    final data = doc.data()!;
+    return LatLng(data['data']['latitude'], data['data']['longitude']);
   }
 }

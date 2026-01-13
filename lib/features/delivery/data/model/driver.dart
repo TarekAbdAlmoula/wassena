@@ -4,12 +4,16 @@ class Driver {
   final String vehicleType;
   final bool availabilityStatus;
   final String diverId;
+  double? latitude;
+  double? longitude;
   Driver({
     required this.driverName,
     required this.phoneNumber,
     required this.vehicleType,
     required this.availabilityStatus,
     required this.diverId,
+    this.latitude,
+    this.longitude,
   });
   factory Driver.fromJson(Map<String, dynamic> json, String diverId) {
     return Driver(

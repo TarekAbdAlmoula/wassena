@@ -6,6 +6,8 @@ class Restaurant {
   final String cuisineType;
   final String location;
   final int phoneNumber;
+  final num latitude;
+  final num longitude;
 
   Restaurant({
     required this.name,
@@ -15,6 +17,8 @@ class Restaurant {
     required this.location,
     required this.phoneNumber,
     required this.id,
+    required this.latitude,
+    required this.longitude,
   });
 
   factory Restaurant.fromJson({
@@ -29,6 +33,8 @@ class Restaurant {
       cuisineType: json['cuisine_type'],
       location: json['address'],
       phoneNumber: json['phone'],
+      latitude: json['latitude'],
+      longitude: json['longitude'],
     );
   }
 }

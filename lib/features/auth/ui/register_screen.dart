@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:wassena/features/auth/ui/components/cutsom_textfield.dart';
 import 'package:wassena/features/home/ui/home_screen.dart';
 
@@ -32,6 +33,34 @@ class _RegisterScreeBodyState extends State<RegisterScreeBody> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   User? _user;
+  Position? position;
+  // this function to get user location {eng.Abdullah}
+  Future<void> getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('الرجاء تفعيل خدمة الموقع')));
+      return;
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return;
+      }
+    }
+    position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    setState(() {
+      addressController.text = position.toString();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -98,8 +127,13 @@ class _RegisterScreeBodyState extends State<RegisterScreeBody> {
                 },
               ),
               CutsomTextField(
-                hintText: ' العنوان',
+                hintText: 'العنوان',
                 controller: addressController,
+                readOnly: true,
+                suffixIcon: Icons.location_on,
+                onTap: () {
+                  getCurrentLocation();
+                },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'العنوان مطلوب';
@@ -107,6 +141,7 @@ class _RegisterScreeBodyState extends State<RegisterScreeBody> {
                   return null;
                 },
               ),
+
               SizedBox(height: 10.h),
               CustomButton(
                 text: 'تسجيل',
@@ -130,6 +165,8 @@ class _RegisterScreeBodyState extends State<RegisterScreeBody> {
                           'address': addressController.text,
                           'password': passwordController.text,
                           'createdAt': FieldValue.serverTimestamp(),
+                          'latitude': position!.latitude,
+                          'longitude': position!.longitude,
                         });
                     Navigator.push(
                       context,

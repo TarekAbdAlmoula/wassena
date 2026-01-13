@@ -6,12 +6,18 @@ class CutsomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String? Function(String?)? validator;
   final TextInputType? keyboardType;
+  final bool? readOnly;
+  final IconData? suffixIcon;
+  final void Function()? onTap;
   const CutsomTextField({
     super.key,
     required this.hintText,
     required this.controller,
     required this.validator,
     this.keyboardType,
+    this.readOnly,
+    this.suffixIcon,
+    this.onTap,
   });
 
   @override
@@ -21,12 +27,14 @@ class CutsomTextField extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 5.h),
         child: TextFormField(
+          readOnly: readOnly ?? false,
+          onTap: onTap,
           keyboardType: keyboardType,
           validator: validator,
           controller: controller,
           decoration: InputDecoration(
             hintText: hintText,
-
+            suffixIcon: Icon(suffixIcon),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
               //change border color
