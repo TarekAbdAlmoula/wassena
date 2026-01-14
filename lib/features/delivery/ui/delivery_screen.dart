@@ -30,10 +30,12 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
   int remainingTime = 0;
   bool _ratingShown = false;
 
-  Timer? _timer;
   Timer? _driverMoveTimer;
 
   List<double> userLocation = [];
+
+  final Distance _distance = const Distance();
+  final double driverSpeed = 5;
 
   final TextEditingController controller = TextEditingController();
   final user = FirebaseAuth.instance.currentUser;
@@ -54,8 +56,6 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
           'driver_id': driver.diverId,
           'order_id': widget.orderId,
           'delivery_status': 0,
-          'estimated_time': 10,
-          'actual_time': 12,
           'created_at': Timestamp.now(),
         });
 
@@ -69,19 +69,6 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
     setState(() {
       _driver = driver;
       deliveryId = docRef.id;
-      remainingTime = 12;
-    });
-
-    _startTimer();
-  }
-
-  void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (remainingTime > 0) {
-        setState(() => remainingTime--);
-      } else {
-        _timer?.cancel();
-      }
     });
   }
 
@@ -91,14 +78,30 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
         .doc(user!.uid)
         .get();
 
-    setState(() {
-      userLocation = [
-        (snapshot.get('latitude') as num).toDouble(),
-        (snapshot.get('longitude') as num).toDouble(),
-      ];
-    });
+    userLocation = [
+      (snapshot.get('latitude') as num).toDouble(),
+      (snapshot.get('longitude') as num).toDouble(),
+    ];
 
-    _startDriverMovement();
+    _updateRemainingTime();
+    Future.delayed(const Duration(seconds: 2), () {
+      if (!mounted) return;
+      _startDriverMovement();
+    });
+  }
+
+  void _updateRemainingTime() {
+    if (_driver == null || userLocation.isEmpty) return;
+
+    final remainingDistance = _distance(
+      LatLng(_driver!.latitude!, _driver!.longitude!),
+      LatLng(userLocation[0], userLocation[1]),
+    );
+
+    setState(() {
+      remainingTime = (remainingDistance / driverSpeed).ceil();
+      if (remainingTime < 0) remainingTime = 0;
+    });
   }
 
   void _startDriverMovement() {
@@ -107,6 +110,12 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
 
       if (_hasDriverArrived()) {
         _driverMoveTimer?.cancel();
+        setState(() => remainingTime = 0);
+
+        FirebaseFirestore.instance
+            .collection('deliveries')
+            .doc(deliveryId)
+            .update({'delivery_status': 2});
         return;
       }
 
@@ -115,25 +124,25 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
   }
 
   void _moveDriverTowardUser() {
-    const double speed = 0.3;
+    const double step = 0.3;
 
     setState(() {
       _driver!.latitude =
-          _driver!.latitude! + (userLocation[0] - _driver!.latitude!) * speed;
+          _driver!.latitude! + (userLocation[0] - _driver!.latitude!) * step;
 
       _driver!.longitude =
-          _driver!.longitude! + (userLocation[1] - _driver!.longitude!) * speed;
+          _driver!.longitude! + (userLocation[1] - _driver!.longitude!) * step;
     });
+
+    _updateRemainingTime();
   }
 
   bool _hasDriverArrived() {
-    const Distance distance = Distance();
-
-    return distance(
+    return _distance(
           LatLng(_driver!.latitude!, _driver!.longitude!),
           LatLng(userLocation[0], userLocation[1]),
         ) <
-        15; // متر
+        15;
   }
 
   String _statusText(int status) {
@@ -200,7 +209,6 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
 
   @override
   void dispose() {
-    _timer?.cancel();
     _driverMoveTimer?.cancel();
     controller.dispose();
     super.dispose();
@@ -208,8 +216,8 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_driver == null) {
-      return const Scaffold(body: Center(child: Text('جاري البحث عن سائق...')));
+    if (_driver == null || userLocation.isEmpty) {
+      return const Scaffold(body: Center(child: Text('...جاري البحث عن سائق')));
     }
 
     return Scaffold(
@@ -237,7 +245,6 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                   'بيانات السائق',
                   style: TextStyle(fontSize: 20, color: Color(0xff094067)),
                 ),
-                const SizedBox(height: 5),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [Text(_driver!.driverName), const Text(' : الاسم')],
@@ -260,48 +267,18 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
             ),
           ),
 
-          StreamBuilder<DocumentSnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('deliveries')
-                .doc(deliveryId)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) return const SizedBox();
-
-              final data = snapshot.data!.data() as Map<String, dynamic>;
-              final status = data['delivery_status'] as int;
-
-              if (status == 2 && !_ratingShown) {
-                _ratingShown = true;
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _showRatingBottomSheet();
-                });
-              }
-
-              return Container(
-                width: double.infinity,
-                margin: const EdgeInsets.symmetric(horizontal: 10),
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(8),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                const Text('حالة التوصيل', style: TextStyle(fontSize: 18)),
+                Text(
+                  'الوقت المتبقي: $remainingTime ثانية',
+                  style: const TextStyle(fontSize: 16),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      'حالة التوصيل: ${_statusText(status)}',
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      'الوقت المتبقي: $remainingTime ثانية',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ],
-                ),
-              );
-            },
+              ],
+            ),
           ),
 
           Expanded(
@@ -315,7 +292,6 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                   urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                   userAgentPackageName: 'com.example.wassena',
                 ),
-
                 MarkerLayer(
                   markers: [
                     Marker(
@@ -326,31 +302,16 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                         size: 40,
                       ),
                     ),
-                    if (userLocation.isNotEmpty)
-                      Marker(
-                        point: LatLng(userLocation[0], userLocation[1]),
-                        child: const Icon(
-                          Icons.location_pin,
-                          color: Colors.red,
-                          size: 40,
-                        ),
+                    Marker(
+                      point: LatLng(userLocation[0], userLocation[1]),
+                      child: const Icon(
+                        Icons.location_pin,
+                        color: Colors.red,
+                        size: 40,
                       ),
+                    ),
                   ],
                 ),
-
-                if (userLocation.isNotEmpty)
-                  PolylineLayer(
-                    polylines: [
-                      Polyline(
-                        points: [
-                          LatLng(_driver!.latitude!, _driver!.longitude!),
-                          LatLng(userLocation[0], userLocation[1]),
-                        ],
-                        strokeWidth: 4,
-                        color: Colors.blue,
-                      ),
-                    ],
-                  ),
               ],
             ),
           ),
