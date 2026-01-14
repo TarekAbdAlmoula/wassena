@@ -207,6 +207,12 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
     );
   }
 
+  String formatRemainingTime(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remainingSeconds = seconds % 60;
+    return '$minutes دقيقة و $remainingSeconds ثانية';
+  }
+
   @override
   void dispose() {
     _driverMoveTimer?.cancel();
@@ -274,7 +280,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
               children: [
                 const Text('حالة التوصيل', style: TextStyle(fontSize: 18)),
                 Text(
-                  'الوقت المتبقي: $remainingTime ثانية',
+                  'الوقت المتبقي: ${formatRemainingTime(remainingTime)}',
                   style: const TextStyle(fontSize: 16),
                 ),
               ],
