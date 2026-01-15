@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:wassena/features/auth/ui/components/cutsom_textfield.dart';
 import 'package:wassena/features/auth/ui/register_screen.dart';
 import 'package:wassena/features/home/ui/home_screen.dart';
+import 'package:wassena/utils/my_colors.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -82,10 +83,32 @@ class _LoginScreenBodyState extends State<LoginScreenBody> {
                     return;
                   }
                   try {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (_) => AlertDialog(
+                        content: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const CircularProgressIndicator(
+                              color: MyColors.kMainColor,
+                            ),
+                            const SizedBox(width: 20),
+                            Expanded(
+                              child: Text(
+                                'يرجى الانتظار',
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
                     await _auth.signInWithEmailAndPassword(
                       email: emailController.text,
                       password: passwordController.text,
                     );
+                    Navigator.of(context, rootNavigator: true).pop();
 
                     Navigator.push(
                       context,

@@ -55,7 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
         builder: (context, asyncSnapshot) {
           if (asyncSnapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: CircularProgressIndicator(color: MyColors.kMainColor),
+            );
           } else if (asyncSnapshot.hasError) {
             return Center(child: Text('حدث خطأ ما'));
           } else {

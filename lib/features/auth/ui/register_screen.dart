@@ -5,11 +5,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:wassena/features/auth/ui/components/cutsom_textfield.dart';
 import 'package:wassena/features/home/ui/home_screen.dart';
+import 'package:wassena/utils/my_colors.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
 
   @override
+  /*************  ✨ Windsurf Command ⭐  *************/
+  /// Builds a [Scaffold] widget with a [RegisterScreeBody] as its body
+  /// and centers it in the given [BuildContext].
+  /*******  63ae34f1-1e60-4a50-886b-483e0ee81a2c  *******/
   Widget build(BuildContext context) {
     return Scaffold(body: Center(child: RegisterScreeBody()));
   }
@@ -150,6 +155,27 @@ class _RegisterScreeBodyState extends State<RegisterScreeBody> {
                     return;
                   }
                   try {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (_) => AlertDialog(
+                        content: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const CircularProgressIndicator(
+                              color: MyColors.kMainColor,
+                            ),
+                            const SizedBox(width: 20),
+                            Expanded(
+                              child: Text(
+                                'يرجى الانتظار',
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
                     await _auth.createUserWithEmailAndPassword(
                       email: emailController.text,
                       password: passwordController.text,
@@ -168,6 +194,8 @@ class _RegisterScreeBodyState extends State<RegisterScreeBody> {
                           'latitude': position!.latitude,
                           'longitude': position!.longitude,
                         });
+                    Navigator.of(context, rootNavigator: true).pop();
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => HomeScreen()),
