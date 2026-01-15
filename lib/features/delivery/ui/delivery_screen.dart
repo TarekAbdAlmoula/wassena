@@ -25,13 +25,10 @@ class DeliveryScreen extends StatefulWidget {
 
 class _DeliveryScreenState extends State<DeliveryScreen> {
   Driver? _driver;
-
   String deliveryId = '';
   int remainingTime = 0;
-  bool _ratingShown = false;
 
   Timer? _driverMoveTimer;
-
   List<double> userLocation = [];
 
   final Distance _distance = const Distance();
@@ -39,6 +36,8 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
 
   final TextEditingController controller = TextEditingController();
   final user = FirebaseAuth.instance.currentUser;
+
+  bool _ratingShown = false;
 
   @override
   void initState() {
@@ -84,6 +83,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
     ];
 
     _updateRemainingTime();
+
     Future.delayed(const Duration(seconds: 2), () {
       if (!mounted) return;
       _startDriverMovement();
@@ -105,6 +105,10 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
   }
 
   void _startDriverMovement() {
+    FirebaseFirestore.instance.collection('deliveries').doc(deliveryId).update({
+      'delivery_status': 1,
+    });
+
     _driverMoveTimer = Timer.periodic(const Duration(seconds: 3), (_) {
       if (_driver == null || userLocation.isEmpty) return;
 
@@ -116,6 +120,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
             .collection('deliveries')
             .doc(deliveryId)
             .update({'delivery_status': 2});
+
         return;
       }
 
@@ -178,9 +183,12 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                 divisions: 4,
                 onChanged: (v) => setState(() => rating = v),
               ),
-              TextField(
-                controller: controller,
-                decoration: const InputDecoration(hintText: 'اكتب تعليقك'),
+              Directionality(
+                textDirection: TextDirection.rtl,
+                child: TextField(
+                  controller: controller,
+                  decoration: const InputDecoration(hintText: 'اكتب تعليقك'),
+                ),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -228,10 +236,10 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
         backgroundColor: MyColors.kMainColor,
         title: const Text('توصيل الطلب', style: TextStyle(color: Colors.white)),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -247,10 +255,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                const Text(
-                  'بيانات السائق',
-                  style: TextStyle(fontSize: 20, color: Color(0xff094067)),
-                ),
+                const Text('بيانات السائق', style: TextStyle(fontSize: 20)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [Text(_driver!.driverName), const Text(' : الاسم')],
@@ -275,15 +280,45 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
 
           Padding(
             padding: const EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                const Text('حالة التوصيل', style: TextStyle(fontSize: 18)),
-                Text(
-                  'الوقت المتبقي: ${formatRemainingTime(remainingTime)}',
-                  style: const TextStyle(fontSize: 16),
-                ),
-              ],
+            child: StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('deliveries')
+                  .doc(deliveryId)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                int status = 0;
+
+                if (snapshot.hasData && snapshot.data!.exists) {
+                  status = snapshot.data!['delivery_status'] ?? 0;
+
+                  if (status == 2 && !_ratingShown) {
+                    _ratingShown = true;
+
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (mounted) _showRatingBottomSheet();
+                    });
+                  }
+                }
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    const Text('حالة التوصيل', style: TextStyle(fontSize: 18)),
+                    Text(
+                      _statusText(status),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green,
+                      ),
+                    ),
+                    Text(
+                      'الوقت المتبقي: ${formatRemainingTime(remainingTime)}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
 
